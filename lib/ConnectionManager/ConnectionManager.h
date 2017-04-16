@@ -15,21 +15,24 @@ public:
   ConnectionManager();
   void resetConfiguration();
   void init();
+
   const char *getMQTTServer();
   const char *getMQTTPort();
+  const char *getMQTTUser();
   const char *getMQTTPassword();
   const char *getMQTTPath();
 
   void saveConfigCallback();
 private:
   WiFiManager wifiManager;
-  bool _shouldSaveConfig   = false;
-  const char *configFile   = "/config.json";
-  const char *apSSIDPrefix = "MRSensor-";
-  const char *apPassword   = "MRSensor";
+  bool _shouldSaveConfig         = false;
+  const char *configFile         = "/config.json";
+  const char *apSSIDPrefix       = "MRSensor-";
+  const char *apPassword         = "MRSensor";
   char _mqtt_server[40];
   char _mqtt_port[6];
-  char _mqtt_password[34];
+  char _mqtt_user[32];
+  char _mqtt_password[32];
   char _mqtt_path[40];
 
   void readMqttConfiguration();

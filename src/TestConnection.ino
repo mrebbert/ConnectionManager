@@ -11,6 +11,7 @@ void setup() {
 
   Serial.printf("MQTT Server: %s\n", connectionManager.getMQTTServer());
   Serial.printf("MQTT Port: %s\n", connectionManager.getMQTTPort());
+  Serial.printf("MQTT User: %s\n", connectionManager.getMQTTUser());
   Serial.printf("MQTT Password: %s\n", connectionManager.getMQTTPassword());
   Serial.printf("MQTT Path: %s\n", connectionManager.getMQTTPath());
 }

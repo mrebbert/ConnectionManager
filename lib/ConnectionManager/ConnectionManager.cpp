@@ -34,12 +34,14 @@ void ConnectionManager::init() {
   // id/name placeholder/prompt default length
   WiFiManagerParameter custom_mqtt_server("server", "mqtt server", _mqtt_server, 40);
   WiFiManagerParameter custom_mqtt_port("port", "mqtt port", _mqtt_port, 6);
-  WiFiManagerParameter custom_mqtt_password("password", "password", _mqtt_password, 32);
+  WiFiManagerParameter custom_mqtt_user("user", "mqtt user", _mqtt_user, 32);
+  WiFiManagerParameter custom_mqtt_password("password", "mqtt password", _mqtt_password, 32);
   WiFiManagerParameter custom_mqtt_path("path", "location", _mqtt_path, 40);
 
   //add all your parameters here
   wifiManager.addParameter(&custom_mqtt_server);
   wifiManager.addParameter(&custom_mqtt_port);
+  wifiManager.addParameter(&custom_mqtt_user);
   wifiManager.addParameter(&custom_mqtt_password);
   wifiManager.addParameter(&custom_mqtt_path);
 
@@ -62,6 +64,7 @@ void ConnectionManager::init() {
     //read updated parameters
     strcpy(_mqtt_server, custom_mqtt_server.getValue());
     strcpy(_mqtt_port, custom_mqtt_port.getValue());
+    strcpy(_mqtt_user, custom_mqtt_user.getValue());
     strcpy(_mqtt_password, custom_mqtt_password.getValue());
     strcpy(_mqtt_path, custom_mqtt_path.getValue());
 
@@ -75,6 +78,10 @@ const char* ConnectionManager::getMQTTServer() {
 
 const char* ConnectionManager::getMQTTPort() {
   return _mqtt_port;
+}
+
+const char* ConnectionManager::getMQTTUser() {
+  return _mqtt_user;
 }
 
 const char* ConnectionManager::getMQTTPassword() {
@@ -112,8 +119,9 @@ void ConnectionManager::readMqttConfiguration() {
 
           strcpy(_mqtt_server, json["mqtt_server"]);
           strcpy(_mqtt_port, json["mqtt_port"]);
-          strcpy(_mqtt_password, json["password"]);
-          strcpy(_mqtt_path, json["path"]);
+          strcpy(_mqtt_user, json["mqtt_user"]);
+          strcpy(_mqtt_password, json["mqtt_password"]);
+          strcpy(_mqtt_path, json["mqtt_path"]);
 
         } else {
           Serial.println("failed to load json config");
@@ -134,8 +142,9 @@ void ConnectionManager::writeMqttConfiguration() {
   JsonObject& json = jsonBuffer.createObject();
   json["mqtt_server"] = _mqtt_server;
   json["mqtt_port"] = _mqtt_port;
-  json["password"] = _mqtt_password;
-  json["path"] = _mqtt_path;
+  json["mqtt_user"] = _mqtt_user;
+  json["mqtt_password"] = _mqtt_password;
+  json["mqtt_path"] = _mqtt_path;
 
   if (SPIFFS.begin()) {
     File fileHandle = SPIFFS.open(configFile, "w");
