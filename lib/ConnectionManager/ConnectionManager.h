@@ -15,10 +15,10 @@ public:
   ConnectionManager();
   void resetConfiguration();
   void init();
-  std::string getMQTTServer();
-  std::string getMQTTPort();
-  std::string getMQTTPassword();
-  std::string getMQTTPath();
+  const char *getMQTTServer();
+  const char *getMQTTPort();
+  const char *getMQTTPassword();
+  const char *getMQTTPath();
 
   void saveConfigCallback();
 private:

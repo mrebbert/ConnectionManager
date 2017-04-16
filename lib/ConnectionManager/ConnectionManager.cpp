@@ -57,16 +57,32 @@ void ConnectionManager::init() {
   //if you get here you have connected to the WiFi
   Serial.println("connected.");
 
-  //read updated parameters
-  strcpy(_mqtt_server, custom_mqtt_server.getValue());
-  strcpy(_mqtt_port, custom_mqtt_port.getValue());
-  strcpy(_mqtt_password, custom_mqtt_password.getValue());
-  strcpy(_mqtt_path, custom_mqtt_path.getValue());
-
   //save the custom parameters to FS
   if (_shouldSaveConfig) {
+    //read updated parameters
+    strcpy(_mqtt_server, custom_mqtt_server.getValue());
+    strcpy(_mqtt_port, custom_mqtt_port.getValue());
+    strcpy(_mqtt_password, custom_mqtt_password.getValue());
+    strcpy(_mqtt_path, custom_mqtt_path.getValue());
+
     writeMqttConfiguration();
   }
+}
+
+const char* ConnectionManager::getMQTTServer() {
+  return _mqtt_server;
+}
+
+const char* ConnectionManager::getMQTTPort() {
+  return _mqtt_port;
+}
+
+const char* ConnectionManager::getMQTTPassword() {
+  return _mqtt_password;
+}
+
+const char* ConnectionManager::getMQTTPath() {
+  return _mqtt_path;
 }
 
 /*
@@ -98,17 +114,7 @@ void ConnectionManager::readMqttConfiguration() {
           strcpy(_mqtt_port, json["mqtt_port"]);
           strcpy(_mqtt_password, json["password"]);
           strcpy(_mqtt_path, json["path"]);
-          /*
-          Serial.println("**** Variables after strcpy: ");
-          Serial.print("MQTT Server: ");
-          Serial.println(_mqtt_server);
-          Serial.print("MQTT Port: ");
-          Serial.println(_mqtt_port);
-          Serial.print("MQTT Password: ");
-          Serial.println(_mqtt_password);
-          Serial.print("MQTT Path: ");
-          Serial.println(_mqtt_path);
-          */
+
         } else {
           Serial.println("failed to load json config");
         }
@@ -145,32 +151,6 @@ void ConnectionManager::writeMqttConfiguration() {
     Serial.println("failed to mount FS");
   }
   //end save
-}
-
-std::string ConnectionManager::getMQTTServer() {
-  std::string _str = _mqtt_server;
-  Serial.print("*** MQTT Server: ");
-  Serial.println(_mqtt_server);
-  Serial.printf("Returning MQTT Server: %s\n", _str.c_str());
-  return _str;
-}
-
-std::string ConnectionManager::getMQTTPort() {
-  std::string _str = _mqtt_port;
-  Serial.printf("Returning MQTT Port: %s\n", _str.c_str());
-  return _str;
-}
-
-std::string ConnectionManager::getMQTTPassword() {
-  std::string _str = _mqtt_password;
-  Serial.printf("Returning MQTT Password: %s\n", _str.c_str());
-  return _str;
-}
-
-std::string ConnectionManager::getMQTTPath() {
-  std::string _str = _mqtt_path;
-  Serial.printf("Returning MQTT Path: %s\n", _str.c_str());
-  return _str;
 }
 
 void ConnectionManager::resetConfiguration() {
