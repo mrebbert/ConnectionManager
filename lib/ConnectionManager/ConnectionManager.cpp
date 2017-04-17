@@ -168,3 +168,66 @@ void ConnectionManager::resetConfiguration() {
   // reset wifi settings
   wifiManager.resetSettings();
 }
+
+/** MQTT **/
+
+MQTTManager::MQTTManager() {
+  _clientId = "MRSensor-";
+  _clientId += ESP.getChipId();
+}
+
+MQTTManager::MQTTManager(const char* clientId) {
+  _clientId = clientId;
+}
+
+void MQTTManager::setConnectionManager(ConnectionManager &connectionManager) {
+  _connectionManager = &connectionManager;
+}
+
+void MQTTManager::init(ConnectionManager &connectionManager) {
+
+  setConnectionManager(connectionManager);
+  PubSubClient c(_espClient);
+  _pubsubClient = c;
+  _pubsubClient.setServer(_connectionManager->_mqtt_server,
+                          atoi(_connectionManager->_mqtt_port));
+}
+
+boolean MQTTManager::connect() {
+  if(_pubsubClient.connect(_clientId,
+                        _connectionManager->_mqtt_user,
+                        _connectionManager->_mqtt_password)) {
+    Serial.println("Connection to MQTT-Server successful.");
+  } else {
+      Serial.print("Connection to MQTT-Server failed, rc=");
+      Serial.println(_pubsubClient.state());
+  }
+  return isConnected();
+}
+
+void MQTTManager::disconnect() {
+  _pubsubClient.disconnect();
+}
+
+boolean MQTTManager::publish(const char* topic, const char* message) {
+  return publish(topic, message, false);
+}
+
+boolean MQTTManager::publish(const char* topic, const char* message, boolean retained) {
+  if (!isConnected()) {
+    Serial.println("No connection to mqtt server available. Connecting...");
+    if(!connect()) {
+      Serial.println("Connection failed.");
+      return false;
+    }
+  }
+  return _pubsubClient.publish(topic, message, retained);
+}
+
+boolean MQTTManager::isConnected() {
+  return _pubsubClient.connected();
+}
+
+boolean MQTTManager::ping() {
+  return _pubsubClient.loop();
+}
